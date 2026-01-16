@@ -37,10 +37,14 @@ struct CharacterDetailView: View {
     }
 
     private var formattedCreatedDate: String {
-        guard let date = ISO8601DateFormatter().date(from: character.created) else {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        guard let date = formatter.date(from: character.created) else {
             return character.created
         }
-        return date.formatted(date: .abbreviated, time: .shortened)
+
+        return date.formatted(date: .abbreviated, time: .omitted)
     }
 
     private func infoRow(title: String, value: String) -> some View {

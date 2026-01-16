@@ -64,11 +64,21 @@
 			);
 			target = C5EF390C2F19C55C000D2BA9 /* RickAndMortyTests */;
 		};
+		C5EF3A472F19F441000D2BA9 /* Exceptions for "RickAndMortyTests" folder in "RickAndMorty" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MockDataLoader/SearchResponse.json,
+			);
+			target = C5EF38FF2F19C55B000D2BA9 /* RickAndMorty */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C5EF39102F19C55C000D2BA9 /* RickAndMortyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C5EF3A472F19F441000D2BA9 /* Exceptions for "RickAndMortyTests" folder in "RickAndMorty" target */,
+			);
 			path = RickAndMortyTests;
 			sourceTree = "<group>";
 		};

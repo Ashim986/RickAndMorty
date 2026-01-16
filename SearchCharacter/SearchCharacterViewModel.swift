@@ -47,6 +47,7 @@ class SearchCharacterViewModel: ObservableObject {
         }
 
         isLoading = true
+        errorMessage = nil 
 
         // receive data in main thread
         searchTask = Task { @MainActor in

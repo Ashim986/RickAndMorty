@@ -19,22 +19,25 @@ struct CharacterSearchView: View {
             VStack {
                 searchBar
 
-                if viewModel.isLoading {
-                    ProgressView()
-                }
-
                 if let error = viewModel.errorMessage {
                     Text(error)
                         .foregroundStyle(.secondary)
                 }
 
-                List(viewModel.results) { character in
-                    NavigationLink {
-                        CharacterDetailView(character: character)
-                    } label: {
-                        CharacterRow(character: character)
+                if viewModel.isLoading {
+                    List(0...4, id: \.self) { index in
+                        SkeletonGrid(rows: index)
+                    }
+                } else {
+                    List(viewModel.results) { character in
+                        NavigationLink {
+                            CharacterDetailView(character: character)
+                        } label: {
+                            CharacterRow(character: character)
+                        }
                     }
                 }
+
             }
             .navigationTitle("Characters")
         }
