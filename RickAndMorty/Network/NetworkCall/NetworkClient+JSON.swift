@@ -14,7 +14,6 @@ extension NetworkClient {
     }
 }
 
-
 extension Data {
     func toJSON<T: Decodable>() throws -> T {
         let decoder = JSONDecoder()

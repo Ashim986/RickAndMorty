@@ -37,7 +37,6 @@ struct CharacterSearchView: View {
                         }
                     }
                 }
-
             }
             .navigationTitle("Characters")
         }

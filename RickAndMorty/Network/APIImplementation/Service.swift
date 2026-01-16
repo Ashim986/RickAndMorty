@@ -19,10 +19,7 @@ struct Service: ServiceProvidable {
     func searchCharacters(name: String) async throws -> SearchResponse {
         try await get(route: .route, param: [.name: name])
     }
-
-
 }
-
 
 extension String {
     static let baseURL = "https://rickandmortyapi.com"
