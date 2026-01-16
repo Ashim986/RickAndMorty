@@ -29,12 +29,44 @@
 		C5EF39172F19C55C000D2BA9 /* RickAndMortyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RickAndMortyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C5EF39022F19C55B000D2BA9 /* RickAndMorty */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = RickAndMorty;
-			sourceTree = "<group>";
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C5EF3A262F19DA98000D2BA9 /* Exceptions for "SearchCharacter" folder in "RickAndMorty" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CharacterImageView.swift,
+				CharacterRow.swift,
+				SearchCharacterView.swift,
+				SearchCharacterViewModel.swift,
+			);
+			target = C5EF38FF2F19C55B000D2BA9 /* RickAndMorty */;
 		};
+		C5EF3A272F19DA98000D2BA9 /* Exceptions for "SearchCharacter" folder in "RickAndMortyTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CharacterImageView.swift,
+				CharacterRow.swift,
+				SearchCharacterView.swift,
+				SearchCharacterViewModel.swift,
+			);
+			target = C5EF390C2F19C55C000D2BA9 /* RickAndMortyTests */;
+		};
+		C5EF3A362F19E809000D2BA9 /* Exceptions for "CharacterDetail" folder in "RickAndMorty" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CharacterDetailView.swift,
+			);
+			target = C5EF38FF2F19C55B000D2BA9 /* RickAndMorty */;
+		};
+		C5EF3A372F19E809000D2BA9 /* Exceptions for "CharacterDetail" folder in "RickAndMortyTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CharacterDetailView.swift,
+			);
+			target = C5EF390C2F19C55C000D2BA9 /* RickAndMortyTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
 		C5EF39102F19C55C000D2BA9 /* RickAndMortyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = RickAndMortyTests;
@@ -43,6 +75,29 @@
 		C5EF391A2F19C55C000D2BA9 /* RickAndMortyUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = RickAndMortyUITests;
+			sourceTree = "<group>";
+		};
+		C5EF39EA2F19D974000D2BA9 /* SearchCharacter */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C5EF3A262F19DA98000D2BA9 /* Exceptions for "SearchCharacter" folder in "RickAndMorty" target */,
+				C5EF3A272F19DA98000D2BA9 /* Exceptions for "SearchCharacter" folder in "RickAndMortyTests" target */,
+			);
+			path = SearchCharacter;
+			sourceTree = "<group>";
+		};
+		C5EF3A0E2F19D977000D2BA9 /* RickAndMorty */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RickAndMorty;
+			sourceTree = "<group>";
+		};
+		C5EF3A312F19E7E1000D2BA9 /* CharacterDetail */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C5EF3A362F19E809000D2BA9 /* Exceptions for "CharacterDetail" folder in "RickAndMorty" target */,
+				C5EF3A372F19E809000D2BA9 /* Exceptions for "CharacterDetail" folder in "RickAndMortyTests" target */,
+			);
+			path = CharacterDetail;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,7 +130,9 @@
 		C5EF38F72F19C55B000D2BA9 = {
 			isa = PBXGroup;
 			children = (
-				C5EF39022F19C55B000D2BA9 /* RickAndMorty */,
+				C5EF3A312F19E7E1000D2BA9 /* CharacterDetail */,
+				C5EF3A0E2F19D977000D2BA9 /* RickAndMorty */,
+				C5EF39EA2F19D974000D2BA9 /* SearchCharacter */,
 				C5EF39102F19C55C000D2BA9 /* RickAndMortyTests */,
 				C5EF391A2F19C55C000D2BA9 /* RickAndMortyUITests */,
 				C5EF39012F19C55B000D2BA9 /* Products */,
@@ -108,7 +165,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				C5EF39022F19C55B000D2BA9 /* RickAndMorty */,
+				C5EF3A0E2F19D977000D2BA9 /* RickAndMorty */,
 			);
 			name = RickAndMorty;
 			packageProductDependencies = (
@@ -132,6 +189,8 @@
 			);
 			fileSystemSynchronizedGroups = (
 				C5EF39102F19C55C000D2BA9 /* RickAndMortyTests */,
+				C5EF39EA2F19D974000D2BA9 /* SearchCharacter */,
+				C5EF3A312F19E7E1000D2BA9 /* CharacterDetail */,
 			);
 			name = RickAndMortyTests;
 			packageProductDependencies = (
