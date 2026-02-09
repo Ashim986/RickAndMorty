@@ -57,6 +57,6 @@ struct CharacterService: NetworkService {
         let response: SearchResponse = try await session.fetch(
             SearchCharacterEndpoint(name: name)
         )
-        return response.results.map { $0.toDomain() }
+        return response.results.map { .init(dto: $0) }
     }
 }

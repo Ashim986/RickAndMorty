@@ -16,13 +16,15 @@ struct CharacterSearchView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            List {
                 if viewModel.isLoading {
                     ProgressView()
                 } else if let error = viewModel.errorMessage {
-                    Text(error).foregroundStyle(.secondary)
+                    Text(error)
+                        .foregroundStyle(.gray)
+
                 } else {
-                    List(viewModel.results) { character in
+                    ForEach(viewModel.results) { character in
                         NavigationLink {
                             CharacterDetailView(character: character)
                         } label: {
@@ -32,7 +34,12 @@ struct CharacterSearchView: View {
                 }
             }
             .navigationTitle("Characters")
-            .searchable(text: $viewModel.query, prompt: "Search by name…")
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(
+                text: $viewModel.query,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search by name..."
+            )
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
         }

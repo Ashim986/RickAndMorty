@@ -26,16 +26,17 @@ struct CharacterDetailView: View {
 
                     infoRow(title: "Created", value: character.formattedDate)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
             }
         }
         .navigationTitle(character.name)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ShareLink(
-                item: "\(character.name) - \(character.species) (\(character.status))"
-            )
-        }
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarLeading) {
+                ShareLink(item: "\(character.name) - \(character.species) (\(character.status))")
+            }
+        })
     }
 
     private func infoRow(title: String, value: String) -> some View {

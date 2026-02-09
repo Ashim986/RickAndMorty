@@ -28,30 +28,8 @@ struct CharacterDTO: Decodable {
     struct OriginDTO: Decodable {
         let name: String
     }
-
-    func toDomain() -> RMCharacter {
-        RMCharacter(
-            id: id,
-            name: name,
-            status: status,
-            species: species,
-            type: type,
-            image: image,
-            created: Self.parseDate(created),
-            origin: origin.name
-        )
-    }
-
-    private static let dateFormatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
-
-    private static func parseDate(_ string: String) -> Date {
-        dateFormatter.date(from: string) ?? Date()
-    }
 }
+
 
 // MARK: - Domain Model
 
@@ -67,5 +45,30 @@ struct RMCharacter: Identifiable {
 
     var formattedDate: String {
         created.formatted(date: .abbreviated, time: .omitted)
+    }
+
+    private static let dateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static func parseDate(_ string: String) -> Date {
+        dateFormatter.date(from: string) ?? Date()
+    }
+}
+
+extension RMCharacter {
+    init(dto: CharacterDTO) {
+        self.init(
+            id: dto.id,
+            name: dto.name,
+            status: dto.status,
+            species: dto.species,
+            type: dto.type,
+            image: dto.image,
+            created: Self.parseDate(dto.created),
+            origin: dto.origin.name
+        )
     }
 }

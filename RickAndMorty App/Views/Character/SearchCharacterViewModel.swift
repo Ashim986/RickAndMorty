@@ -36,8 +36,9 @@ class SearchCharacterViewModel: ObservableObject {
     }
 
     func performSearch(_ query: String) {
-            // cancel previous task
+        // cancel previous task
         searchTask?.cancel()
+
 
         guard !query.isEmpty else {
             results = []
@@ -47,28 +48,35 @@ class SearchCharacterViewModel: ObservableObject {
         }
 
         isLoading = true
-        errorMessage = nil 
+        errorMessage = nil
 
-        // receive data in main thread
-        searchTask = Task { @MainActor in
+        searchTask = Task { [weak self, service] in
             do {
                 let characters = try await service.searchCharacters(name: query)
-
-                if !Task.isCancelled {
-                    self.results = characters
-                    errorMessage = nil
+                guard !Task.isCancelled else { return }
+                await MainActor.run {
+                    self?.results = characters
+                    self?.errorMessage = nil
+                    self?.isLoading = false
                 }
-
+            } catch is CancellationError {
+                return
             } catch let err as NetworkError {
-                errorMessage = err.localizedDescription
-                self.results = []
-
+                await MainActor.run {
+                    self?.errorMessage = err.localizedDescription
+                    self?.results = []
+                    self?.isLoading = false
+                }
             } catch {
-                errorMessage = "Something went wrong"
-                self.results = []
+                if let urlError = error as? URLError, urlError.code == .cancelled {
+                    return
+                }
+                await MainActor.run {
+                    self?.errorMessage = "Something went wrong"
+                    self?.results = []
+                    self?.isLoading = false
+                }
             }
-
-            isLoading = false
         }
     }
 }

@@ -14,8 +14,17 @@ struct CharacterImageView: View {
         AsyncImage(url: url) { image in
             image.resizable().scaledToFill()
         } placeholder: {
-            ProgressView()
+            placeholder 
         }
         .clipped()
     }
+
+
+    private var placeholder: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 18).fill(Color(.systemGray5))
+            ProgressView()
+        }
+    }
 }
+
