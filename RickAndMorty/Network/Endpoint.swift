@@ -26,7 +26,7 @@ extension Endpoint {
 
 // MARK: - Character Endpoints
 
-struct SearchCharacterEndpoint: Endpoint {
+struct SearchCharacterEndpoint: Endpoint, RequestBuilder {
     let name: String
     var path: String { "/api/character" }
     var queryItems: [URLQueryItem] {

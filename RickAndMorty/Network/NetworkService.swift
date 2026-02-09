@@ -33,9 +33,7 @@ enum NetworkError: LocalizedError {
 
 struct CharacterService: NetworkService {
     func searchCharacters(name: String) async throws -> [RMCharacter] {
-        let request = try RequestBuilder.build(
-            from: SearchCharacterEndpoint(name: name)
-        )
+        let request = try SearchCharacterEndpoint(name: name).buildRequest()
         let (data, _) = try await URLSession.shared.data(for: request)
 
         do {

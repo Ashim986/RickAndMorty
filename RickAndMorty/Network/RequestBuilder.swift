@@ -7,19 +7,25 @@
 
 import Foundation
 
-// MARK: - Request Builder
+// MARK: - Request Builder Protocol
 
-enum RequestBuilder {
-    static func build(from endpoint: Endpoint) throws -> URLRequest {
-        var components = URLComponents(string: endpoint.baseURL + endpoint.path)
-        components?.queryItems = endpoint.queryItems
+protocol RequestBuilder {
+    func buildRequest() throws -> URLRequest
+}
+
+// MARK: - Default Implementation for any Endpoint
+
+extension RequestBuilder where Self: Endpoint {
+    func buildRequest() throws -> URLRequest {
+        var components = URLComponents(string: baseURL + path)
+        components?.queryItems = queryItems
 
         guard let url = components?.url else {
             throw NetworkError.invalidURL
         }
 
         var request = URLRequest(url: url)
-        request.httpMethod = endpoint.method
+        request.httpMethod = method
         return request
     }
 }
