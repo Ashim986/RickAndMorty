@@ -11,12 +11,10 @@ struct CharacterRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-
             CharacterImageView(url: character.image)
-                .accessibilityHidden(true)
                 .frame(width: 50, height: 50)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .accessibilityLabel("\(character.name) image")
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(character.name)
                     .font(.headline)
