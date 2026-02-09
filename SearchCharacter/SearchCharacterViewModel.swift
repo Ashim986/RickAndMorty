@@ -14,11 +14,11 @@ class SearchCharacterViewModel: ObservableObject {
     @Published private(set) var errorMessage: String?
     @Published private(set) var isLoading = false
 
-    private let service: ServiceProvidable
+    private let service: NetworkService
     private var cancellable = Set<AnyCancellable>()
     private var searchTask: Task<Void, Never>?
 
-    init(service: ServiceProvidable = Service() ) {
+    init(service: NetworkService = CharacterService()) {
         self.service = service
         bindSearch()
     }
@@ -52,14 +52,14 @@ class SearchCharacterViewModel: ObservableObject {
         // receive data in main thread
         searchTask = Task { @MainActor in
             do {
-                let response = try await service.searchCharacters(name: query)
+                let characters = try await service.searchCharacters(name: query)
 
                 if !Task.isCancelled {
-                    self.results = response.results
-                    errorMessage = nil 
+                    self.results = characters
+                    errorMessage = nil
                 }
 
-            } catch let err as NetworkingError {
+            } catch let err as NetworkError {
                 errorMessage = err.localizedDescription
                 self.results = []
 

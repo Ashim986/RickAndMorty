@@ -30,7 +30,7 @@ final class CharacterSearchViewModelTests: XCTestCase {
     func testSearchSuccessUpdatesResults() async {
         let service = MockService()
         let data: SearchResponse = loadData(from: "SearchResponse")
-        service.result = .success(data)
+        service.result = .success(data.results)
 
         let vm = SearchCharacterViewModel(service: service)
 
@@ -47,7 +47,7 @@ final class CharacterSearchViewModelTests: XCTestCase {
 
     func testSearchFailureSetsErrorMessage() async {
         let service = MockService()
-        service.result = .failure(NetworkingError.unknown)
+        service.result = .failure(NetworkError.requestFailed)
 
         let vm = SearchCharacterViewModel(service: service)
 
@@ -63,7 +63,7 @@ final class CharacterSearchViewModelTests: XCTestCase {
     func testDebounceOnlyExecutesLastQuery() async {
         let service = MockService()
         let data: SearchResponse = loadData(from: "SearchResponse")
-        service.result = .success(data)
+        service.result = .success(data.results)
 
         let vm = SearchCharacterViewModel(service: service)
 

@@ -6,21 +6,10 @@
 //
 @testable import RickAndMorty
 
-class MockService: ServiceProvidable {
-    var networkClient: NetworkClient {
-        return NetworkClient(baseURL: "")
-    }
+class MockService: NetworkService {
+    var result: Result<[RMCharacter], Error> = .success([])
 
-    var result: Result<SearchResponse, Error>?
-
-    func searchCharacters(name: String) async throws -> SearchResponse {
-        switch result {
-            case .success(let success):
-                return success
-            case .failure(let failure):
-                throw failure
-            case nil:
-                return SearchResponse(results: [])
-        }
+    func searchCharacters(name: String) async throws -> [RMCharacter] {
+        try result.get()
     }
 }

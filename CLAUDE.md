@@ -25,18 +25,26 @@ xcodebuild -project RickAndMorty.xcodeproj -scheme RickAndMorty -sdk iphonesimul
 
 No linter or formatter is configured (no SwiftLint, no swiftformat).
 
-## Architecture (MVVM)
+## Architecture (MVVM + Protocol-based Network)
 
 ```
-SwiftUI View → ViewModel (ObservableObject) → Service (protocol) → NetworkClient → URLSession
+SwiftUI View → ViewModel (ObservableObject) → NetworkService (protocol) → CharacterService → RequestBuilder → URLSession
 ```
+
+### Design Patterns
+
+- **Factory Pattern** — `CharacterEndpoint` enum: each case (e.g. `.search(name:)`) produces endpoint config (baseURL, path, method, queryItems). New API calls = new cases.
+- **Builder Pattern** — `RequestBuilder.build(from:)` takes any `Endpoint` and assembles a `URLRequest` with query params via `URLComponents`.
+- **Dependency Injection** — ViewModel depends on `NetworkService` protocol, not concrete type. Real `CharacterService` injected by default, `MockService` injected in tests.
 
 ### Layers
 
 - **View** — SwiftUI declarative views, no business logic. Located in `SearchCharacter/` and `CharacterDetail/`.
 - **ViewModel** — `SearchCharacterViewModel` manages state with `@Published` properties, uses Combine for 300ms input debouncing, async/await for API calls, `@MainActor` for thread safety. Cancels in-flight requests on new queries.
-- **Service** — `Service` struct conforming to `ServiceProvidable` (which composes `API` + `NetworkService` protocols). Defined in `RickAndMorty/Network/APIImplementation/Service.swift`.
-- **Network** — `NetworkClient` handles base URL/timeout config. Extensions add `.get()` for data and generic JSON decoding. `NetworkingRequest` builds `URLRequest` objects with query params via `URLComponents`.
+- **Network** — 3 files total:
+  - `Endpoint.swift` — `Endpoint` protocol + `CharacterEndpoint` enum (factory)
+  - `RequestBuilder.swift` — Builds `URLRequest` from any `Endpoint`
+  - `NetworkService.swift` — `NetworkService` protocol + `NetworkError` enum + `CharacterService` implementation
 - **Model** — `RMCharacter` and `SearchResponse` are `Decodable` structs in `RickAndMorty/Model/Character.swift`.
 
 ## Project Structure
@@ -48,17 +56,9 @@ RickAndMorty/
 │   ├── Model/
 │   │   └── Character.swift                # RMCharacter, SearchResponse
 │   ├── Network/
-│   │   ├── HTTPVerb.swift                 # GET/POST enum
-│   │   ├── Parameter.swift                # typealias Param = [String: String]
-│   │   ├── APIImplementation/
-│   │   │   ├── Service.swift              # API protocol + Service struct
-│   │   │   ├── NetworkService.swift       # NetworkService protocol + extensions
-│   │   │   └── NetworkingRequest.swift    # URL builder + NetworkingError enum
-│   │   └── NetworkCall/
-│   │       ├── NetworkClient.swift        # Base client struct
-│   │       ├── NetworkClient+Request.swift
-│   │       ├── NetworkClient+Data.swift
-│   │       └── NetworkClient+JSON.swift
+│   │   ├── Endpoint.swift                 # Endpoint protocol + CharacterEndpoint (factory)
+│   │   ├── RequestBuilder.swift           # Builds URLRequest from Endpoint (builder)
+│   │   └── NetworkService.swift           # NetworkService protocol + NetworkError + CharacterService
 │   ├── Utility/
 │   │   └── ShimmerView.swift              # Loading skeleton UI
 │   └── Assets.xcassets/
@@ -72,7 +72,7 @@ RickAndMorty/
 ├── RickAndMortyTests/                     # Unit tests
 │   ├── CharacterSearchViewModelTests.swift
 │   └── MockDataLoader/
-│       ├── MockService.swift              # Mock ServiceProvidable
+│       ├── MockService.swift              # Mock NetworkService
 │       ├── DataLoader.swift               # JSON fixture loader
 │       └── SearchResponse.json            # Test fixture
 └── RickAndMortyUITests/                   # UI tests
@@ -83,11 +83,10 @@ RickAndMorty/
 ## Key Conventions
 
 ### Swift Style
-- Structs over classes where possible (models, services, network client)
-- Protocol-oriented design: `API`, `ServiceProvidable`, `NetworkService` protocols for abstraction and testability
-- Dependency injection: `SearchCharacterViewModel(service:)` accepts any `ServiceProvidable`
-- `typealias Param = [String: String]` used for query parameters and headers
-- String constants defined as static extensions on `String` (e.g., `.baseURL`, `.route`)
+- Structs over classes where possible (models, services)
+- Protocol-oriented design: `Endpoint` protocol for request definition, `NetworkService` protocol for DI
+- Dependency injection: `SearchCharacterViewModel(service:)` accepts any `NetworkService`
+- Enum-based factory: `CharacterEndpoint.search(name:)` encapsulates endpoint configuration
 - File header comments follow Xcode default template format
 
 ### Async Patterns
@@ -97,12 +96,12 @@ RickAndMorty/
 - `@MainActor` for UI state updates
 
 ### Error Handling
-- `NetworkingError` enum with descriptive cases: `invalidURL`, `badURLRequest(code:)`, `decodingFail`, `unknownServer`, `unknown`
+- `NetworkError` enum with cases: `invalidURL`, `requestFailed`, `decodingFailed`
 - Conforms to `LocalizedError` for user-facing messages
-- ViewModel catches errors by type and sets `errorMessage` published property
+- ViewModel catches `NetworkError` by type and sets `errorMessage` published property
 
 ### Testing
-- Unit tests use `MockService` implementing `ServiceProvidable` protocol
+- Unit tests use `MockService` implementing `NetworkService` protocol
 - Test fixtures loaded from JSON via `DataLoader.loadData(from:)` helper
 - Tests use `Task.sleep` to account for Combine debounce timing (300-600ms waits)
 - `@testable import RickAndMorty` for internal access
@@ -111,13 +110,14 @@ RickAndMorty/
 ## Adding a New Feature
 
 1. **New model** — Add `Decodable` struct to `RickAndMorty/Model/`
-2. **New API call** — Add method to `API` protocol in `Service.swift`, implement in `Service` struct
-3. **New screen** — Create a view in its own top-level directory (pattern: `FeatureName/FeatureNameView.swift`), create a ViewModel as `ObservableObject`
-4. **Tests** — Add to `RickAndMortyTests/`, mock the service protocol, use JSON fixtures in `MockDataLoader/`
+2. **New API endpoint** — Add a case to an existing `Endpoint` enum (e.g. `CharacterEndpoint`) or create a new enum conforming to `Endpoint`
+3. **New service method** — Add method to `NetworkService` protocol, implement in `CharacterService` using `RequestBuilder.build(from:)`
+4. **New screen** — Create a view in its own top-level directory (pattern: `FeatureName/FeatureNameView.swift`), create a ViewModel as `ObservableObject`
+5. **Tests** — Add to `RickAndMortyTests/`, add method to `MockService`, use JSON fixtures in `MockDataLoader/`
 
 ## Common Pitfalls
 
 - The `SearchCharacter/` and `CharacterDetail/` directories are at the repo root, not inside `RickAndMorty/` — keep this pattern for new feature modules
 - No package manager is used; all dependencies are Apple frameworks
-- `Param` is a typealias, not a custom type — it's just `[String: String]`
-- Network extensions on `ServiceProvidable` provide default `get()` implementations — new HTTP methods should follow the same pattern in `NetworkService.swift`
+- `RequestBuilder` is an enum used as a namespace (no cases) — call `RequestBuilder.build(from:)` statically
+- The project uses `PBXFileSystemSynchronizedRootGroup` — Xcode auto-detects new files in existing directories, no manual pbxproj edits needed
