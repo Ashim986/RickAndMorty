@@ -7,7 +7,7 @@
 
 import Foundation
 
-// MARK: - Endpoint Protocol (Factory Pattern)
+// MARK: - Endpoint Protocol
 
 protocol Endpoint {
     var baseURL: String { get }
@@ -16,25 +16,20 @@ protocol Endpoint {
     var queryItems: [URLQueryItem] { get }
 }
 
-// MARK: - Character Endpoint (Concrete Factory)
+// MARK: - Default base URL for Rick and Morty API
 
-enum CharacterEndpoint: Endpoint {
-    case search(name: String)
-
+extension Endpoint {
     var baseURL: String { "https://rickandmortyapi.com" }
-
-    var path: String {
-        switch self {
-        case .search: return "/api/character"
-        }
-    }
-
     var method: String { "GET" }
+    var queryItems: [URLQueryItem] { [] }
+}
 
+// MARK: - Character Endpoints
+
+struct SearchCharacterEndpoint: Endpoint {
+    let name: String
+    var path: String { "/api/character" }
     var queryItems: [URLQueryItem] {
-        switch self {
-        case .search(let name):
-            return [URLQueryItem(name: "name", value: name)]
-        }
+        [URLQueryItem(name: "name", value: name)]
     }
 }
