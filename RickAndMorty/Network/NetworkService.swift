@@ -39,7 +39,8 @@ struct CharacterService: NetworkService {
         let (data, _) = try await URLSession.shared.data(for: request)
 
         do {
-            return try JSONDecoder().decode(SearchResponse.self, from: data).results
+            return try JSONDecoder().decode(SearchResponse.self, from: data)
+                .results.map { $0.toDomain() }
         } catch {
             throw NetworkError.decodingFailed
         }

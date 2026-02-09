@@ -22,13 +22,13 @@ struct CharacterDetailView: View {
                 Group {
                     infoRow(title: "Species", value: character.species)
                     infoRow(title: "Status", value: character.status)
-                    infoRow(title: "Origin", value: character.origin.name)
+                    infoRow(title: "Origin", value: character.origin)
 
                     if !character.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         infoRow(title: "Type", value: character.type)
                     }
 
-                    infoRow(title: "Created", value: formattedCreatedDate)
+                    infoRow(title: "Created", value: character.formattedDate)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
@@ -54,17 +54,6 @@ struct CharacterDetailView: View {
             ]
             ShareSheet(items: shareItems)
         }
-    }
-
-    private var formattedCreatedDate: String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-        guard let date = formatter.date(from: character.created) else {
-            return character.created
-        }
-
-        return date.formatted(date: .abbreviated, time: .omitted)
     }
 
     private func infoRow(title: String, value: String) -> some View {

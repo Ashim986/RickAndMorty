@@ -29,8 +29,8 @@ final class CharacterSearchViewModelTests: XCTestCase {
 
     func testSearchSuccessUpdatesResults() async {
         let service = MockService()
-        let data: SearchResponse = loadData(from: "SearchResponse")
-        service.result = .success(data.results)
+        let response: SearchResponse = loadData(from: "SearchResponse")
+        service.result = .success(response.results.map { $0.toDomain() })
 
         let vm = SearchCharacterViewModel(service: service)
 
@@ -62,8 +62,8 @@ final class CharacterSearchViewModelTests: XCTestCase {
 
     func testDebounceOnlyExecutesLastQuery() async {
         let service = MockService()
-        let data: SearchResponse = loadData(from: "SearchResponse")
-        service.result = .success(data.results)
+        let response: SearchResponse = loadData(from: "SearchResponse")
+        service.result = .success(response.results.map { $0.toDomain() })
 
         let vm = SearchCharacterViewModel(service: service)
 

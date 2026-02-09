@@ -25,9 +25,9 @@ struct CharacterSearchView: View {
                 }
 
                 if viewModel.isLoading {
-                    List(0...4, id: \.self) { index in
-                        SkeletonGrid(rows: index)
-                    }
+                    Spacer()
+                    ProgressView()
+                    Spacer()
                 } else {
                     List(viewModel.results) { character in
                         NavigationLink {

@@ -17,7 +17,7 @@ struct CharacterImageView: View {
                     switch phase {
                         case .success(let img): img.resizable().scaledToFill()
                         case .failure(_): placeholder
-                        case .empty: placeholder.shimmer()
+                        case .empty: ProgressView()
                         @unknown default: placeholder
                     }
                 }
