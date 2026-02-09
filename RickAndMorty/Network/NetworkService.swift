@@ -29,18 +29,34 @@ enum NetworkError: LocalizedError {
     }
 }
 
-// MARK: - Concrete Service
+// MARK: - Generic Fetch
 
-struct CharacterService: NetworkService {
-    func searchCharacters(name: String) async throws -> [RMCharacter] {
-        let request = try SearchCharacterEndpoint(name: name).buildRequest()
-        let (data, _) = try await URLSession.shared.data(for: request)
+extension URLSession {
+    func fetch<T: Decodable>(_ endpoint: some Endpoint & RequestBuilder) async throws -> T {
+        let request = try endpoint.buildRequest()
+        let (data, _) = try await self.data(for: request)
 
         do {
-            return try JSONDecoder().decode(SearchResponse.self, from: data)
-                .results.map { $0.toDomain() }
+            return try JSONDecoder().decode(T.self, from: data)
         } catch {
             throw NetworkError.decodingFailed
         }
+    }
+}
+
+// MARK: - Concrete Service
+
+struct CharacterService: NetworkService {
+    private let session: URLSession
+
+    init(session: URLSession = .shared) {
+        self.session = session
+    }
+
+    func searchCharacters(name: String) async throws -> [RMCharacter] {
+        let response: SearchResponse = try await session.fetch(
+            SearchCharacterEndpoint(name: name)
+        )
+        return response.results.map { $0.toDomain() }
     }
 }
