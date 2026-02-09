@@ -32,7 +32,7 @@ struct CharacterSearchView: View {
                 }
             }
             .navigationTitle("Characters")
-            .searchable(text: $viewModel.query, prompt: "Search by name…")
+            .searchable(text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search by name…")
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
         }
