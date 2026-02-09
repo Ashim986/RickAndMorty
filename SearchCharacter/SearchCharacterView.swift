@@ -16,26 +16,36 @@ struct CharacterSearchView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else if let error = viewModel.errorMessage {
-                    Text(error).foregroundStyle(.secondary)
-                } else {
-                    List(viewModel.results) { character in
-                        NavigationLink {
-                            CharacterDetailView(character: character)
-                        } label: {
-                            CharacterRow(character: character)
+            List {
+                Section {
+                    if viewModel.isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    } else if let error = viewModel.errorMessage {
+                        Text(error).foregroundStyle(.secondary)
+                    } else {
+                        ForEach(viewModel.results) { character in
+                            NavigationLink {
+                                CharacterDetailView(character: character)
+                            } label: {
+                                CharacterRow(character: character)
+                            }
                         }
                     }
+                } header: {
+                    TextField("Search by name…", text: $viewModel.query)
+                        .textFieldStyle(.roundedBorder)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .padding(.vertical, 4)
                 }
             }
+            .listSectionHeaderTopPadding(0)
             .navigationTitle("Characters")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search by name…")
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
         }
     }
 }
