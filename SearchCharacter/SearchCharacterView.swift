@@ -16,18 +16,11 @@ struct CharacterSearchView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                searchBar
-
-                if let error = viewModel.errorMessage {
-                    Text(error)
-                        .foregroundStyle(.secondary)
-                }
-
+            Group {
                 if viewModel.isLoading {
-                    Spacer()
                     ProgressView()
-                    Spacer()
+                } else if let error = viewModel.errorMessage {
+                    Text(error).foregroundStyle(.secondary)
                 } else {
                     List(viewModel.results) { character in
                         NavigationLink {
@@ -39,30 +32,9 @@ struct CharacterSearchView: View {
                 }
             }
             .navigationTitle("Characters")
-        }
-    }
-
-    private var searchBar: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.secondary)
-
-            TextField("Search by name…", text: $viewModel.query)
+            .searchable(text: $viewModel.query, prompt: "Search by name…")
+            .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
-            .autocorrectionDisabled(true)
-            .submitLabel(.search)
-
-            if !viewModel.query.isEmpty {
-                Button {
-                    viewModel.query = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                }
-                .accessibilityLabel("Clear search")
-            }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
     }
 }
